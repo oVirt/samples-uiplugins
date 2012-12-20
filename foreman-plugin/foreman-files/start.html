@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- including jquery -->
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script>
+
+var api = parent.pluginApi('foreman');
+var conf = api.configObject();
+
+function setAccessibleVmForemanSubTabs(shouldShowSubTabs) {
+    api.setTabAccessible('foreman-details', shouldShowSubTabs);
+    api.setTabAccessible('foreman-graphs', shouldShowSubTabs);
+}
+
+function showVmForemanSubTabs(hostName) {
+    try {
+        setAccessibleVmForemanSubTabs(false);
+        var foremanUrl = conf.url + '/hosts/' + hostName;
+        var foremanVmDetailsUrl = foremanUrl + '/ovirt';
+        var foremanVmGraphsUrl = foremanUrl + '/graphs/ovirt';
+        api.setTabContentUrl('foreman-details', foremanVmDetailsUrl);
+        api.setTabContentUrl('foreman-graphs', foremanVmGraphsUrl);
+        setAccessibleVmForemanSubTabs(true);
+    } catch (err) {
+        // We do nothing here. The tab will remain inaccessible
+    }
+}
+
+// Logout from Foreman (won't do nothing if not logged in), and Login to Foreman with the oVirt logged-in user
+function relogin(logoutUrl, loginUrl, userName, userId, sessionId) {
+    $.get(logoutUrl, { },
+        function(data, status) {
+            // Once we are logged in to Foreman, we can tell the UI plugin infrastructure that the plugin is ready for use
+            $.post(loginUrl, { login: { login: userName, password: sessionId + ';' + userId }},
+                   function(data, status) {
+                // Currently nothing done here
+            }
+        );
+    });
+}
+
+// Register an event handler, for the UI Plugin init
+api.register({
+    UiInit: function() {
+        // Foreman Details will show the details of the Foreman Host that matches the VM
+        // URL will be change upon VM selection event
+        api.addSubTab('VirtualMachine', conf.foremanDetailsLabel, 'foreman-details', '');
+
+        // Foreman Graphs will show the different Graphs of the Foreman Host that matches the VM
+        // URL will be change upon VM selection event
+        api.addSubTab('VirtualMachine', conf.foremanGraphsLabel, 'foreman-graphs', '');
+
+        // We hide both sub-tabs until some VM is selected
+        setAccessibleVmForemanSubTabs(false);
+
+        // Dashboard Main Tab
+        api.addMainTab(conf.foremanDashboardLabel, 'foreman', conf.url + '/dashboard/ovirt');
+    },
+    // When the REST API session is acquired, we login to Foreman, using oVirt-specific SSO implementation.
+    // Foreman contains an oVirt authentication source in order to do that.
+    RestApiSessionAcquired: function(sessionId) {
+            var userName = conf.ovirtUserNamePrefix + api.loginUserName();
+            relogin(conf.logoutUrl, conf.loginUrl, userName, api.loginUserId(), sessionId);
+    },
+    // When the VM selection is changed, we need to query Foreman to set the Foreman relevant Sub-Tabs
+    VirtualMachineSelectionChange: function() {
+        setAccessibleVmForemanSubTabs(false);
+        if (arguments.length == 1) {
+            var vmId = arguments[0].id;
+            var vmName = arguments[0].name;
+            var foremanSearchHostUrl = conf.url + '/hosts?&search=' + encodeURIComponent('uuid=' + vmId) + '+or+' + encodeURIComponent('name=' + vmName) + '&format=json';
+            // Get the relevant host URLs and set up the Sub-Tabs accordingly
+            $.getJSON(foremanSearchHostUrl, function (data) {
+                try {
+                    // If a host was returned we set the show the Sub-Tabs
+                    if (data[0] != null) {
+                        showVmForemanSubTabs(data[0].host.name);
+                    }
+                } catch (err) {
+                    // We do nothing here. The tab will remain inaccessible
+                }
+            });
+        }
+    },
+    UserLogout: function() {
+        // Logging out from Foreman as well
+        $.get(conf.logoutUrl, { });
+    }
+});
+
+// Calling api.ready - the plugin is now ready to be initialized
+api.ready();
+</script>
+</head>
+<body>
+</body>
+</html>

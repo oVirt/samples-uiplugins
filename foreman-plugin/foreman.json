@@ -1,0 +1,24 @@
+{
+	// A name that uniquely identifies the plugin (required)
+	"name": "foreman",
+
+	// URL of plugin host page that invokes the plugin code (required)
+	"url": "/webadmin/webadmin/plugin/foreman/start.html",
+
+	// Default configuration object associated with the plugin (optional)
+	"config": {
+		"url": "http://ovirt-engine.example.com/foreman",
+		"loginUrl": "http://ovirt-engine.example.com/foreman/users/login",
+		"logoutUrl": "http://ovirt-engine.example.com/foreman/users/logout",
+        "foremanDetailsLabel" : "Foreman Details",
+        "foremanGraphsLabel" : "Foreman Graphs",
+        "foremanDashboardLabel" : "Foreman Dashboard",
+        "ovirtUserNamePrefix" : "ovirt_"
+	 },
+
+	// Path to plugin static resources (optional)
+	// Used when serving plugin files through PluginResourceServlet
+	// This path is relative to /usr/share/ovirt-engine/ui-plugins
+	"resourcePath": "foreman-files"
+}
+

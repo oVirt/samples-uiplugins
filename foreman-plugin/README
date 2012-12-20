@@ -1,0 +1,33 @@
+In the oVirt engine, take the files Foreman UI plugin files from the UI-plugins repository, and place them in /usr/share/ovirt-engine/ui-plugins:
+1. foreman.json
+2. foreman-files/start.html
+
+Set up Apache mod_proxy in the oVirt-engine server as follows (change names and ports according to your environment), adding the following to /etc/httpd/conf/httpd.conf, in the <IfModule mod_proxy.c> section (note that if you already have oVirt proxy defined in /etc/httpd/conf.d/ovirt-engine.conf then just add it the foreman definitions below):
+ProxyPassMatch ^/(foreman)(/.*)?$ http://foreman_server:foreman_port/$1$2
+ProxyPassReverse /foreman http://foreman_server:foreman_port/foreman
+ProxyPass /webadmin http://engine-server:engine-port/webadmin
+ProxyPassReverse /webadmin http://engine-server:engine-port/webadmin
+ProxyPass /api http://engine-server:engine-port/api
+ProxyPassReverse /api http://engine-server:engine-port/api
+Restart the oVirt engine, and Apache
+Access webadmin through the URL you put in httpd.conf
+Now you can enjoy the Dashboard, and VM-Foreman sub-tabs in case the VM is found in Foreman (via uuid or name)
+
+Change the Foreman URL in the foreman.json file, to contain the URL to your oVirt engine, followed by /foreman:
+
+        "url": "http://engine-severport/foreman",
+        "loginUrl": "http://engine-server:port/foreman/users/login",
+        "logoutUrl": "http://engine-server:port/foreman/users/logout",
+ 
+To configure the SSL proxy you'd need mod_ssl configured, adding/changing the following entries in the relevant VirtualHost section in /etc/httpd/conf.d/ssl.conf:
+
+SSLEngine on
+SSLProxyEngine on
+ProxyPassMatch ^/(foreman)(/.*)?$ https://foreman_server:foreman_port/$1$2
+ProxyPass /webadmin https://engine-server:engine-port/webadmin
+ProxyPassReverse /webadmin https://engine-server:engine-port/webadmin
+ProxyPassReverse /foreman https://foreman_server:foreman_port/foreman
+SSLProxyMachineCertificateFile path_to_cert.pem
+The PEM file above is created by concatenating the certificate file (path defined in the SSLCertificateFile entry), and the key file (SSLCertificateKeyFile entry).
+
+See https://github.com/oourfali/foreman_ovirt for instructions on the Foreman server
