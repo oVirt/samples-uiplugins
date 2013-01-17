@@ -1,0 +1,20 @@
+**********************
+* Installation Steps *
+**********************
+
+< Engine >
+* Copy the following to '/usr/share/ovirt-engine/ui-plugins':
+- shellbox.json
+- shellbox-files/start.html
+* Login to the WebAdmin:
+- Hosts main-tab -> new 'Shell Box' action button
+- Hosts main-tab -> new 'Shell Box' sub-tab
+
+< Host >
+* Install 'shellinabox':
+- Source code, http://code.google.com/p/shellinabox/downloads/list
+- Binary, http://rpmfind.net/linux/rpm2html/search.php?query=shellinabox
+* Post installation:
+- Edit configuration file, /etc/sysconfig/shellinaboxd
+- Replace 'OPTS="-s /:LOGIN"' with 'OPTS="--disable-ssl --service /:SSH"'
+- Start 'shellinabox' service

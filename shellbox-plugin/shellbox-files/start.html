@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+    var api = parent.pluginApi('ShellBoxPlugin');
+
+    api.register({
+        UiInit : function() {
+            // Add 'Shell Box' sub-tab under 'Hosts' main-tab
+            api.addSubTab('Host', 'Shell Box', 'shell-box', '');
+
+            // Add 'Shell Box' button (+ context menu) to 'Hosts' main-tab
+            api.addMainTabActionButton('Host', 'Shell Box', {
+                onClick : function() {
+                    window.open(getShellBoxUrl(arguments), '_blank');
+                },
+                isEnabled : function() {
+                    // The button is enabled only when a single host is selected
+                    return arguments.length == 1;
+                },
+                isAccessible : function() {
+                    // The button is always visible
+                    return true;
+                }
+            });
+        },
+        HostSelectionChange : function() {
+            if (arguments.length == 1) {
+                // Update iframe URL on host selection
+                api.setTabContentUrl('shell-box', getShellBoxUrl(arguments));
+            }
+        },
+    });
+    api.ready();
+
+    // Get 'Shell Box' URL using specified host address
+    var getShellBoxUrl = function(arguments) {
+        var hostAddress = arguments[0].name;
+        var port = '4200';
+        var shellUrl = 'http://' + hostAddress + ':' + port;
+
+        return shellUrl;
+    }
+</script>
+</head>
+<body>
+</body>
+</html>
