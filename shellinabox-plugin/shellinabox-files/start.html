@@ -2,40 +2,36 @@
 <html>
 <head>
 <script type='text/javascript'>
-    var api = parent.pluginApi('ShellBoxPlugin');
+    var api = parent.pluginApi('ShellInABoxPlugin');
 
     api.register({
         UiInit : function() {
-            // Add 'Shell Box' sub-tab under 'Hosts' main-tab
-            api.addSubTab('Host', 'Shell Box', 'shell-box', '');
+            // Add 'Shell In A Box' sub-tab under 'Hosts' main-tab
+            api.addSubTab('Host', 'Shell In A Box', 'shellinabox', '');
 
-            // Add 'Shell Box' button (+ context menu) to 'Hosts' main-tab
-            api.addMainTabActionButton('Host', 'Shell Box', {
+            // Add 'Shell In A Box' button (+ context menu) to 'Hosts' main-tab
+            api.addMainTabActionButton('Host', 'Shell In A Box', {
                 onClick : function() {
-                    window.open(getShellBoxUrl(arguments), '_blank');
+                    window.open(getShellInABoxUrl(arguments[0]), '_blank');
                 },
                 isEnabled : function() {
                     // The button is enabled only when a single host is selected
                     return arguments.length == 1;
-                },
-                isAccessible : function() {
-                    // The button is always visible
-                    return true;
                 }
             });
         },
         HostSelectionChange : function() {
             if (arguments.length == 1) {
                 // Update iframe URL on host selection
-                api.setTabContentUrl('shell-box', getShellBoxUrl(arguments));
+                api.setTabContentUrl('shellinabox', getShellInABoxUrl(arguments[0]));
             }
         },
     });
     api.ready();
 
     // Get 'Shell Box' URL using specified host address
-    var getShellBoxUrl = function(arguments) {
-        var hostAddress = arguments[0].name;
+    var getShellInABoxUrl = function(selectedHost) {
+        var hostAddress = selectedHost.hostname;
         var port = '4200';
         var shellUrl = 'http://' + hostAddress + ':' + port;
 

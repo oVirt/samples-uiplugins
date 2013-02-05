@@ -4,11 +4,11 @@
 
 < Engine >
 * Copy the following to '/usr/share/ovirt-engine/ui-plugins':
-- shellbox.json
-- shellbox-files/start.html
+- shellinabox.json
+- shellinabox-files/start.html
 * Login to the WebAdmin:
-- Hosts main-tab -> new 'Shell Box' action button
-- Hosts main-tab -> new 'Shell Box' sub-tab
+- Hosts main-tab -> new 'Shell In A Box' action button
+- Hosts main-tab -> new 'Shell In A Box' sub-tab
 
 < Host >
 * Install 'shellinabox':
