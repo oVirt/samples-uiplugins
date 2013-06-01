@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+    var api = parent.pluginApi('UI-VDSM-Hooks-Plugin');
+	var config = api.configObject();
+
+    api.register({
+        UiInit : function() {
+			addHostMainTabActionButton('VdsClient API', 'runScript', 'vdsClientApi.py', "800px", "600px");
+			addHostMainTabActionButton('GetAllTasks', 'getAllTasks');
+			addHostMainTabActionButton('StopAllTasks', 'stopAllTasks');
+			addHostMainTabActionButton('ClearAllTasks', 'clearAllTasks');
+			addHostMainTabActionButton('GetStorageDomainsList', 'getStorageDomainsList');
+			addHostMainTabActionButton('GetConnectedStoragePool', 'getConnectedStoragePoolsList');
+			addHostMainTabActionButton('DisconnectStoragePool', 'disconnectStoragePool');
+			addHostMainTabActionButton('StopSPM', 'spmStop');
+        }
+    });
+    api.ready();
+
+	var addHostMainTabActionButton = function(title, command, args, width, height) {
+		api.addMainTabActionButton('Host', title, {
+			onClick : function() {
+				var url = getCgiUrl(arguments[0], command, args);
+				var dialogToken = "hook-dialog";
+				api.showDialog(title, dialogToken, url, width || "500px", height || "400px",
+					{
+						resizeEnabled: true
+					}
+				);
+			},
+			isEnabled : function() {
+				return arguments.length == 1;
+			},
+			location : 'OnlyFromContext'
+		});
+	}
+
+    // Get 'CGI' scripts URL using specified host address
+    var getCgiUrl = function(selectedHost, command, args) {
+        var hostAddress = selectedHost.hostname;
+        var cgiUrl = 'http://' + hostAddress + config.cgiUrl + "?command=" + command + "&args=" + (args || "");
+
+        return cgiUrl;
+    }
+</script>
+</head>
+<body>
+</body>
+</html>

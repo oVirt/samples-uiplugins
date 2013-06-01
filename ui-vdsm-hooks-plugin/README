@@ -1,0 +1,13 @@
+**********************
+* Installation Steps *
+**********************
+
+< Engine >
+* Copy the following to '/usr/share/ovirt-engine/ui-plugins':
+- ui-vdsm-hooks.json
+- ui-vdsm-hooks-files/start.html
+* Login to the WebAdmin:
+- Hosts main-tab -> select a Host -> new context menu options
+
+< Host >
+* Copy 'cgi-bin' folder into your favourite web server directory (e.g. /var/www/).

@@ -1,0 +1,6 @@
+{
+  "name": "UI-VDSM-Hooks-Plugin",
+  "url": "/webadmin/webadmin/plugin/UI-VDSM-Hooks-Plugin/start.html",
+  "resourcePath": "ui-vdsm-hooks-files",
+  "config": { "cgiUrl": "/cgi-bin/ui-vdsm-hooks/ui-vdsm-hooks.cgi" }
+}
