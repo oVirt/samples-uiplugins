@@ -1,0 +1,11 @@
+# ProgressBar project ignore list
+
+# Generated files
+out/
+
+# IDE files
+.idea
+*.iml
+
+# Local Node.js modules
+node_modules/

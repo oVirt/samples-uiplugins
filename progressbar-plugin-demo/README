@@ -1,0 +1,60 @@
+oVirt ProgressBar UI Plugin
+---------------------------
+
+This plugin tracks user's progress of using the oVirt system through achievements organized in different categories.
+
+The goal of this plugin is to encourage users to explore all features available in oVirt.
+
+This plugin uses following development stack:
+
+* AngularJS, Model-View-Controller framework for JavaScript
+  http://angularjs.org/
+
+* Bootstrap, visual component framework for CSS
+  http://getbootstrap.com/
+
+* UI Bootstrap, Bootstrap's visual components ported to AngularJS
+  http://angular-ui.github.io/bootstrap/
+
+* Jasmine, Behavior-Driven Development style testing framework for JavaScript
+  http://pivotal.github.io/jasmine/
+
+* Karma, test runner for JavaScript
+  http://karma-runner.github.io/
+
+
+PRE-REQUISITES
+
+Make sure you have oVirt Engine installed and running
+  http://www.ovirt.org/Download
+
+
+INSTALLING
+
+Expose plugin metadata to oVirt Engine
+  $ ln -s $PLUGIN_HOME/progressbar.json $ENGINE_DATA/ovirt-engine/ui-plugins/progressbar.json
+
+Expose plugin static files to oVirt Engine
+  $ ln -s $PLUGIN_HOME/src $ENGINE_DATA/ovirt-engine/ui-plugins/progressbar-resources
+
+
+DEVELOPMENT
+
+Install Node.js using pre-built binaries
+  http://nodejs.org/download/
+
+Alternatively, install Node.js using package manager
+  https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
+
+Install Karma and dependent Node.js packages into global node_modules directory
+  $ npm install -g karma
+
+Install additional Karma plugins into local ./node_modules directory
+  $ npm install karma-junit-reporter --save-dev
+
+Start Karma which spawns web browser used to run unit tests on source change
+  $ karma start --browsers=Firefox
+
+Alternatively, run unit tests through Karma just once
+  $ karma start --single-run --no-auto-watch --browsers=Firefox
+

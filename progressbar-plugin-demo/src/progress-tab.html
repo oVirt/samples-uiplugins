@@ -1,0 +1,103 @@
+<!doctype html>
+<html ng-app="plugin.tab">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/progress-tab.css">
+</head>
+<body ng-controller="TabCtrl">
+
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand"><span class="text-primary">ProgressBar</span> plugin</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li ng-repeat="item in getCategories()" ng-class="{active: isActiveCategory($index)}">
+                        <a ng-click="setActiveCategory($index)">{{item.name}}</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a>One</a></li>
+                    <li><a>Two</a></li>
+                    <li class="active"><a>Three</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="masthead">
+            <h3 class="text-center text-muted">
+                Select category
+            </h3>
+            <ul class="nav nav-justified">
+                <li ng-repeat="item in getCategories()" ng-class="{active: isActiveCategory($index)}">
+                    <a ng-click="setActiveCategory($index)">{{item.name}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <progressbar class="progress-striped active" value="getActiveCategory().progress" type="success">
+            <p class="lead">{{getActiveCategory().progress}} % complete</p>
+        </progressbar>
+
+        <div class="jumbotron">
+            <h2 class="text-primary">
+                Your rank in {{getActiveCategory().name}} is <strong>{{getActiveCategory().rank}}</strong>
+            </h2>
+            <p class="lead">
+                Some descriptive overview of this category goes here, possibly with pointers to documentation.
+            </p>
+            <p>
+                <a class="btn btn-lg btn-success">Learn more about {{getActiveCategory().name}}</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="pull-left">
+            <div class="panel panel-success achievement">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Unlocked achievement</h3>
+                </div>
+                <div class="panel-body">
+                    <span class="glyphicon glyphicon-check"></span>
+                    Description related to this achievement, acting as micro-documentation.
+                </div>
+            </div>
+        </div>
+        <div class="pull-left">
+            <div class="panel panel-danger achievement">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Locked achievement</h3>
+                </div>
+                <div class="panel-body">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    Hint and tips how to unlock this achievement, written in an encouraging way.
+                </div>
+            </div>
+        </div>
+        <div class="pull-left">
+            <div class="panel panel-warning achievement">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Blocked achievement</h3>
+                </div>
+                <div class="panel-body">
+                    <span class="glyphicon glyphicon-flash"></span>
+                    This achievement is blocked by some other achievement that must be unlocked first.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/angular/js/angular.js"></script>
+    <script src="lib/ui-bootstrap/js/ui-bootstrap-tpls.js"></script>
+    <script src="js/tab.js"></script>
+    <script src="js/tab-controller.js"></script>
+
+</body>
+</html>
