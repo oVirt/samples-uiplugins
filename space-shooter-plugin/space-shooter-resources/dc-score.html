@@ -1,0 +1,33 @@
+<!doctype html>
+<!--
+	oVirt Space Shooter: Data Center 'Score' sub tab
+	displays current user score for given Data Center entity
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<p>
+    Score for Data Center <span id='dataCenterName'>?</span>:
+    <span id='score'>?</span> (<span id='rank'>?</span>)
+</p>
+
+<script type='text/javascript'>
+
+	// Ask the plugin for current user score
+	parent.postMessage('GetDataCenterScore', '*');
+
+	// The plugin should call this function in response to GetDataCenterScore message
+	var update = function(dataCenterName, score, rank, rankColor) {
+		document.getElementById('dataCenterName').innerHTML = '<em>' + dataCenterName + '</em>';
+		document.getElementById('score').innerHTML = '<b>' + score + '</b>';
+		document.getElementById('rank').innerHTML = '<b>' + rank + '</b>';
+		document.getElementById('rank').style.color = rankColor;
+	};
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!doctype html>
+<!--
+	oVirt Space Shooter: plugin host page
+	contains plugin code that interacts with plugin API
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+	<!-- Use Modernizr for detecting necessary HTML5 features like Canvas and Local Storage -->
+	<script src='modernizr.custom.js'></script>
+</head>
+<body>
+
+<script type='text/javascript'>
+
+	// Get API object for 'space-shooter' plugin
+    // Note: using 'parent' due to plugin code being evaluated within an iframe context
+	var api = parent.pluginApi('space-shooter');
+
+    // Get runtime plugin configuration, i.e. custom configuration (if any)
+    // merged on top of default configuration (if any)
+	var config = api.configObject();
+
+    // Customize API options that affect specific features of plugin API
+	api.options({
+		// Configure source origin(s), i.e. protocol://domain:port
+		// from which HTML5 message events will be accepted
+		allowedMessageOrigins: config.allowedOrigins
+	});
+
+	var victory = false; // Has player won at least one game in the current game dialog?
+	var dataCenter = null; // Data Center entity associated with the current game dialog
+
+	var gameContentWindow = null; // Reference to game Window object
+	var subTabWindow = null; // Reference to 'Score' sub tab Window object
+
+	var dialogToken = 'space-shooter-dialog';
+	var subTabToken = 'space-shooter-dc-score';
+
+	var dialogUrl = 'plugin/space-shooter/game/index.html';
+	var subTabUrl = 'plugin/space-shooter/dc-score.html';
+
+	var init = function() {
+		// Add new action button to Data Center main tab
+		api.addMainTabActionButton('DataCenter', 'Protect DataCenter from Alien Invasion',
+            // Extra options for addMainTabActionButton function
+            {
+                isEnabled: function() {
+                    // Enable button only when selecting single Data Center
+                    return arguments.length == 1;
+			    },
+			    onClick: function() {
+                    // Reset victory flag and open new game dialog
+				    victory = false;
+				    openDialog();
+			    },
+			    location: 'OnlyFromContext' // Button available only from context menu
+		    }
+        );
+
+		// Add new 'Score' sub tab under Data Center main tab
+		api.addSubTab('DataCenter', 'Space Shooter Score', subTabToken, subTabUrl);
+	};
+
+	var openDialog = function() {
+		// Show modal dialog with actual game content
+		api.showDialog(dataCenter.name + ' under attack', dialogToken, dialogUrl,
+            '340px', '560px',
+			// Extra options for showDialog function
+			{
+				closeIconVisible: false, // Hide dialog's close icon
+				closeOnEscKey: false, // Prevent user from closing dialog with Escape key
+				resizeEnabled: true, // Allow dialog resizing
+				buttons:
+				[
+                    // Button for those who cannot beat the game (it can happen!)
+					{
+						label: 'Cheat',
+						onClick: cheatGame
+					},
+                    // Button to close the dialog
+					{
+						label: 'Get me outta here',
+						onClick: closeDialog
+					}
+				]
+			});
+	};
+
+	var closeDialog = function() {
+		if (victory) {
+			api.closeDialog(dialogToken);
+		} else {
+			alert('Not so fast! Destroy the aliens at least once.');
+		}
+	};
+
+	var cheatGame = function() {
+		if (gameContentWindow != null) {
+			// Invoke function on game Window object
+			gameContentWindow.winGame();
+		}
+	};
+
+	var getKey = function() {
+		// Calculate unique key (string) for storing and retrieving game score for
+		// given user + Data Center combination, i.e. admin@internal_dc123_DCScore
+		return dataCenter != null ? api.loginUserName() + "_" + dataCenter.id + "_DCScore" : null;
+	};
+
+	var getScore = function() {
+		// Return current score as string, or 0 if there is no score yet
+		return localStorage.getItem(getKey()) || '0';
+	};
+
+	var incScore = function() {
+		// Increment current score by 1, store the result as string
+		localStorage.setItem(getKey(), (parseInt(getScore(), 10) + 1) + '');
+	};
+
+	var updateSubTab = function() {
+		if (subTabWindow == null || dataCenter == null) {
+			return;
+		}
+
+		// Get the current user score
+		var score = getScore();
+		var intScore = parseInt(score, 10);
+
+		// Calculate rank based on user score
+		var rank, rankColor;
+		switch (true) {
+			case (intScore >= 10):
+				rank = 'Laser Master';
+				rankColor = 'green';
+				break;
+			case (intScore >= 3):
+				rank = 'Veteran';
+				rankColor = 'orange';
+				break;
+			case (intScore >= 1):
+				rank = 'Survivor';
+				rankColor = 'red';
+				break;
+			default:
+				rank = 'Newbie';
+				rankColor = 'gray';
+				break;
+		}
+
+		// Update 'Score' sub tab
+		subTabWindow.update(dataCenter.name, score, rank, rankColor);
+	};
+
+	var browserRocks = function() {
+		// Detect necessary HTML5 features via Modernizr
+		return Modernizr.canvas && Modernizr.canvastext && Modernizr.localstorage;
+	};
+
+	// Register event handler functions for later invocation by UI plugin infrastructure
+	api.register({
+
+        // Called by the infrastructure as part of plugin initialization,
+        // will be called just once during the lifetime of a plugin
+		UiInit: function() {
+			if (browserRocks()) {
+				init();
+			}
+		},
+
+        // Called when item selection changes in Data Center main tab,
+        // useful for keeping track of currently selected Data Center entity
+		DataCenterSelectionChange: function() {
+			if (arguments.length == 1) {
+				// Single entity was selected, remember it and make 'Score' sub tab visible
+				dataCenter = arguments[0];
+				api.setTabAccessible(subTabToken, true);
+			} else {
+				// Otherwise, forget the entity and hide 'Score' sub tab
+				dataCenter = null;
+				api.setTabAccessible(subTabToken, false);
+			}
+		},
+
+        // Called when another Window (i.e. custom UI contributed by a plugin)
+        // sends message to WebAdmin Window via HTML5 postMessage API,
+        // ideal for cross-window communication that works across different origins
+		MessageReceived: function(data, sourceWindow) {
+			// If we get here, we already passed allowed source origin check
+			switch (data) {
+				// Game content just got loaded
+				case 'GameInit':
+					gameContentWindow = sourceWindow;
+					break;
+				// User just won the game
+				case 'GameWin':
+					victory = true;
+					incScore();
+					updateSubTab();
+					break;
+				// 'Score' sub tab asks for current user score
+				case 'GetDataCenterScore':
+					subTabWindow = sourceWindow;
+					updateSubTab();
+					break;
+			}
+		}
+
+	});
+
+	// Tell plugin infrastructure that we are good to go, expect UiInit callback
+	api.ready();
+
+</script>
+
+</body>
+</html>

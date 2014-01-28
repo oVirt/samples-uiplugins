@@ -1,0 +1,5 @@
+# space-shooter project ignore list
+
+# IDE files
+.idea
+*.iml

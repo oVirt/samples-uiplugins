@@ -1,0 +1,34 @@
+oVirt Space Shooter
+-------------------
+
+Welcome, space traveler!
+
+This plugin is part of UI Plugins Crash Course:
+
+  http://www.ovirt.org/Tutorial/UIPlugins/CrashCourse
+
+This plugin contains Alien Invasion, sample HTML5 game
+developed by Pascal Rettig and released under both GPL
+and MIT license:
+
+  https://github.com/cykod/AlienInvasion
+
+Refer to Crash Course wiki for step-by-step tutorial.
+
+
+INSTALLING
+
+Configure oVirt Engine HTTP(S) origin(s):
+
+  $ ENGINE_HTTP='http://engine-domain-example:8080'
+  $ ENGINE_HTTPS='https://engine-domain-example:8443'
+  $ PLUGIN_USER_CONFIG='{ "config": { "allowedOrigins": ["$ENGINE_HTTP","$ENGINE_HTTPS"] } }'
+  $ echo $PLUGIN_USER_CONFIG > $ENGINE_ETC/ui-plugins/space-shooter-config.json
+
+Alternatively, simply edit $PLUGIN_HOME/space-shooter.json file directly.
+
+Expose plugin metadata to oVirt Engine
+  $ ln -s $PLUGIN_HOME/space-shooter.json $ENGINE_USR/ui-plugins/space-shooter.json
+
+Expose plugin static files to oVirt Engine
+  $ ln -s $PLUGIN_HOME/space-shooter-resources $ENGINE_USR/ui-plugins/space-shooter-resources

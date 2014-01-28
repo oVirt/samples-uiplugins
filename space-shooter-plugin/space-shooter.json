@@ -1,0 +1,19 @@
+{
+
+    // Unique name of the plugin
+    "name": "space-shooter",
+
+    // URL of plugin host page that bootstraps plugin code
+    // This URL maps to $ENGINE_USR/ui-plugins/space-shooter-resources/plugin.html
+    "url": "plugin/space-shooter/plugin.html",
+
+    // Path to plugin resource files relative to descriptor
+    // This path maps to $ENGINE_USR/ui-plugins/space-shooter-resources
+    "resourcePath": "space-shooter-resources",
+
+    // Default configuration associated with the plugin
+    "config": {
+        "allowedOrigins": ["http://127.0.0.1:8080"]
+    }
+
+}
