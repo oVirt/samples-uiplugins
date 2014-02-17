@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="css/dashboard.css" rel="stylesheet"/>
+
+        <script src="lib/angular/js/angular.min.js"></script>
+        <script src="lib/ui-bootstrap/js/ui-bootstrap-tpls.min.js"></script>
+        <script src="js/services.js"></script>
+        <script src="js/dashboard.js"></script>
+    </head>
+    <body ng-app="dashboardApp">
+        <div class="dashboard-panel">
+            <div ng-controller="SummaryCtrl">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th> Clusters </th>
+                            <th> Hosts </th>
+                            <th> Volumes </th>
+                            <th> Bricks </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td> {{summary.no_of_clusters}} </td>
+                            <td> 
+                                {{summary.hosts_up}} <img src="images/up.png"/> &nbsp;
+                                {{summary.hosts_down}} <img src="images/down.png"/>
+                            </td>
+                            <td> 
+                                {{summary.volumes_up}} <img src="images/up.png"/> &nbsp;
+                                {{summary.volumes_down}} <img src="images/down.png"/>
+                            </td>
+                            <td> 
+                                {{summary.bricks_up}} <img src="images/up.png"/> &nbsp;
+                                {{summary.bricks_down}} <img src="images/down.png"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel panel-danger" ng-controller="AlertsCtrl">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Alerts 
+                        <span class="badge">{{alerts.length}}</span> 
+                        <a ng-click="refreshAlerts()"><span class="pull-right glyphicon glyphicon-refresh"></span></a>
+                    </h3>
+                </div>
+                <div class="panel-body" ng-if="alerts.length==0">
+                    No Alerts present
+                </div>
+                <div ng-if="alerts.length>0">
+                    <table class="table table-striped table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th style="width:40%"> Description</th>
+                                <th style="width:20%"> Time </th>
+                                <th style="width:20%"> Origin </th>
+                                <th style="width:20%"> Custom ID </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="alert in alerts">
+                                <td style="width:40%"> {{alert.description}} </td>
+                                <td style="width:20%"> {{alert.time | date:'medium'}} </td>
+                                <td style="width:20%"> {{alert.origin}} </td>
+                                <td style="width:20%"> {{alert.custom_id}} </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div ng-controller="ClustersCtrl">
+              <accordion close-others="false">
+                <accordion-group is-open="isopen" ng-repeat="cluster in clusters">
+                    <accordion-heading>
+                        <i class="pull-left glyphicon" ng-class="{'glyphicon-chevron-down': isopen, 'glyphicon-chevron-right': !isopen}"></i>
+                        {{cluster.name}} [Cluster]
+                    </accordion-heading>
+                    <div ng-repeat="volume in cluster.volumes">
+                        {{volume.name}}
+                    </div>
+                </accordion-group>
+              </accordion>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "ovirt-dashboard",
+  "description": "Nagios alerts and trends dashboard for oVirt",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-karma": "~0.6.2",
+
+    "karma": "~0.10.9",
+    "karma-firefox-launcher": "~0.1",
+    "karma-phantomjs-launcher": "~0.1",
+    "karma-junit-reporter": "~0.2.1",
+    "karma-coverage": "~0.2.0"
+  }
+}

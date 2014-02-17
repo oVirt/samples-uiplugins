@@ -1,0 +1,27 @@
+Nagios Dashboard and Trends plugin for oVirt
+--------------------------------------------
+
+This plugin provides dashboard and trends for oVirt using Nagios monitoring tool.
+
+DEVELOPMENT
+-----------
+Install Node.js 
+  Using pre-built binaries
+  http://nodejs.org/download/
+  (or)
+  Via package manager
+  https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager
+
+Install grunt package into global node_modules directory
+  $ npm install -g grunt
+
+Install additional packages into local ./node_modules directory
+  $ npm install
+
+Start unit test using grunt which will spawn web browser and run tests
+  $ grunt test:unit
+
+Generate test coverage report (destination directory - ./test/out/coverage)
+  $ grunt test:coverage
+
+

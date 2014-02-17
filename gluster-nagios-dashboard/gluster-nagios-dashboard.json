@@ -1,0 +1,5 @@
+{
+    "name": "OvirtDashboard",
+    "url": "plugin/OvirtDashboard/start.html",
+    "resourcePath": "gluster-nagios-dashboard-resources"
+}

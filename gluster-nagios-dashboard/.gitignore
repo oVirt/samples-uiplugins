@@ -1,0 +1,8 @@
+#Ignore list
+
+# Local Node.js modules
+node_modules/
+
+#Generated files
+test/out
+

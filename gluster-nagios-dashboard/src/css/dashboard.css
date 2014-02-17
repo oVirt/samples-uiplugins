@@ -1,0 +1,7 @@
+.dashboard-panel {
+	padding: 5px;
+}
+
+.nav, .pagination, .carousel, .panel-title a {
+    cursor: pointer;
+}
