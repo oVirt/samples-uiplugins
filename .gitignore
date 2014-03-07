@@ -1,0 +1,5 @@
+# samples-uiplugins global ignore list
+
+# IDE files
+.idea
+*.iml
