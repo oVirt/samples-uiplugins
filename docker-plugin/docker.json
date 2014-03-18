@@ -1,0 +1,21 @@
+{
+
+    // Unique name of the plugin
+    "name": "docker",
+
+    // URL of plugin host page that bootstraps plugin code
+    // This URL maps to $ENGINE_USR/ui-plugins/docker-resources/plugin.html
+    "url": "plugin/docker/plugin.html",
+
+    // Path to plugin resource files relative to descriptor
+    // This path maps to $ENGINE_USR/ui-plugins/space-shooter-resources
+    "resourcePath": "docker-resources",
+
+    // Default configuration associated with the plugin
+    "config": {
+        "allowedOrigins": ["http://localhost:8700"],
+        "apiEntryPoint": "http://localhost:8700/ovirt-engine/api",
+        "dockerImages": ["fedora", "ubuntu", "cirros", "goldmann/wildfly-cluster:front-end"]
+    }
+
+}

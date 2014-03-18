@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+.select {
+  border: 1px solid gray;
+  background-color: white;
+  width: 265px;
+}
+
+.body {
+  margin: 0 !important;
+  color: #333;
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-size: small;
+}
+
+.form {
+  top: 0;
+  position: absolute;
+}
+
+</style>
+</head>
+<body class="body">
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<p>
+
+<form name="launchform" class="form">
+<table style="width:100%; background-color: #e5e5e5; padding: 5px; margin: 0px;">
+<col width="250px">
+<tr>
+<td>Data-Center</td><td><select name="dcs" size="1" id="dcs" class="target select">
+</select></td>
+</tr>
+<tr>
+<td>Cluster</td><td><select name="clusters" size="1" class="select">
+</select></td>
+</tr>
+<tr>
+<td>Template</td><td><select name="templates" size="1" class="select">
+</select></td>
+</tr>
+</table>
+<br/>
+<table>
+<col width="250px">
+<tr><td>Name</td><td><input type="text" name="name" class="select"></td></tr>
+<tr><td>Number of Sockets</td><td><input type="text" name="sockets" class="select"></td></tr>
+<tr><td>Number of Cores</td><td><input type="text" name="cores" class="select"></td></tr>
+<tr><td>Memory Size (in GB)</td><td><input type="text" name="memory" class="select"></td></tr>
+</table>
+<br/>
+<br/>
+Docker Details:<br/>
+<table style="width:100%">
+<col width="250px">
+<tr>
+<td>Image</td><td><select name="images" size="1" class="select">
+</select></td>
+</tr>
+<tr><td>Port Mapping (e.g. 80:80)<img src="icon_help.png" title="Map a network port to the container"</td><td><input type="text" name="port" class="select" title="Map a network port to the container"></td></tr>
+<tr><td>Command<img src="icon_help.png" title="Needed in images without an entrypoint"></td><td><input type="text" name="command" class="select" title="Needed in images without an entrypoint"></td></tr>
+</table>
+
+<br/>
+Cloud-Init Data:<br/>
+<table style="width:100%">
+<col width="250px">
+<tr><td>Host name</td><td><input type="text" name="hostname" class="select"></td></tr>
+<tr><td>SSH key</td><td><input type="text" name="sshkey" class="select"></td></tr>
+</table>
+</form>
+<div style="top:0; line-height: 430px; width:100%; height:100%; background-color: white; text-align: center; vertical-align: middle; display:none; position: absolute; z-index:9999;" id="progress">
+<img src="progress.gif">
+</div>
+
+
+</p>
+
+
+<script type='text/javascript'>
+
+var DOCKER_PLUGIN_MESSAGE_PREFIX = 'docker-plugin';
+var DOCKER_PLUGIN_MESSAGE_DELIM = ':';
+
+function template(templateName) {
+    this.name = templateName;
+    this.toJsonString = function () { return JSON.stringify(this); };
+};
+
+function cluster(clusterName) {
+    this.name = clusterName;
+    this.toJsonString = function () { return JSON.stringify(this); };
+};
+
+function vm(vmName, vmTemplateName, vmClusterName, vmMemory, vmCpuTopologySockets, vmCpuTopologyCores, initialization) {
+    this.name = vmName;
+    this.template = new template(vmTemplateName);
+    this.cluster = new cluster(vmClusterName);
+    this.memory = vmMemory;
+    this.cpu = new cpu(new topology(vmCpuTopologySockets, vmCpuTopologyCores));
+    this.initialization = initialization;
+    this.toJsonString = function () { return JSON.stringify(this); };
+};
+
+function topology(sockets, cores) {
+    this.sockets = sockets;
+    this.cores = cores;
+    this.toJsonString = function () { return JSON.stringify(this); };
+}
+
+function cpu(topology) {
+    this.topology = topology;
+    this.toJsonString = function () { return JSON.stringify(this); };
+}
+
+function createDockerCustomScript(image, command, port) {
+    // We call docker service restart and wait a few seconds so it would start
+    // This is needed because in some cases the docker service didn't find the DNS
+    // thus it wasn't able to download images. Service restart fixed that issue
+    var prefix = 'runcmd:\n- [ service, docker, restart ]\n- [ sleep, 10 ]\n- [ docker, run, -d';
+    var suffix = ' ]';
+    var result = prefix;
+
+    // Setting port mapping if it is set
+    if (port) {
+        result += ', -p, "' + port + '"';
+    }
+
+    // Setting the image
+    result += ', "' + image + '"';
+
+    // Setting a command if it is set
+    if (command.trim()) {
+        result += ', "' + command.trim().replace(" ", " , ") + '"';
+    }
+
+    result += suffix;
+
+    return result;
+}
+
+function initialization(hostName, sshKey, regenerateSshKeys, customScript) {
+    this.host_name = hostName;
+    this.authorized_ssh_keys = sshKey;
+    this.regenerate_ssh_keys = regenerateSshKeys;
+    this.custom_script = customScript;
+    this.toJsonString = function () { return JSON.stringify(this); };
+}
+
+function createNewVm(apiEntryPoint, vm) {
+    var dialog = window;
+    var vmsUrl = apiEntryPoint + "/vms";
+    jQuery.ajax({
+        type: "POST",
+        url: vmsUrl,
+        headers: { 'Prefer' : 'persistent-auth' },
+        data: vm.toJsonString(),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+
+        success: function (data, status, jqXHR) {
+             alert('VM created successfully');
+
+             // Closing the dialog
+             parent.postMessage(DOCKER_PLUGIN_MESSAGE_PREFIX + DOCKER_PLUGIN_MESSAGE_DELIM + 'CloseDialog', '*');
+        },
+
+        error: function (jqXHR, status) {
+             // Showing the error
+             alert(JSON.stringify(jqXHR));
+
+             // Hiding the progress widget
+             $( "#progress" ).hide();
+        }
+     });
+
+     // Showing the progress widget
+     $( "#progress" ).show();
+}
+
+function dcSelectionChangedEvent() {
+    var selectedIndex = document.launchform.dcs.options.selectedIndex;
+    parent.postMessage(DOCKER_PLUGIN_MESSAGE_PREFIX + DOCKER_PLUGIN_MESSAGE_DELIM + 'GetClustersAndTemplates' + DOCKER_PLUGIN_MESSAGE_DELIM + document.launchform.dcs.options[selectedIndex].value, '*');
+}
+
+// The plugin should call this function in response to GetDataCenterScore message
+function updateDataCenters(dcs) {
+    for (var index in dcs) {
+        document.launchform.dcs.options[index] = new Option(dcs[index], dcs[index], false, false);
+    }
+    dcSelectionChangedEvent();
+};
+
+function updateClusters(clusters) {
+    for (var index in clusters) {
+        document.launchform.clusters.options[index] = new Option(clusters[index], clusters[index], false, false);
+    }
+};
+
+function updateTemplates(templates) {
+    for (var index in templates) {
+        document.launchform.templates.options[index] = new Option(templates[index], templates[index], false, false);
+    }
+};
+
+function updateImages(images) {
+    for (var index in images) {
+        document.launchform.images.options[index] = new Option(images[index], images[index], false, false);
+    }
+};
+
+function addVm(apiEntryPoint) {
+    var name = document.launchform.name.value;
+    var template = document.launchform.templates.options[document.launchform.templates.options.selectedIndex].value;
+    var cluster = document.launchform.clusters.options[document.launchform.clusters.options.selectedIndex].value;
+    var memory = document.launchform.memory.value*1024*1024*1024;
+    var sockets = document.launchform.sockets.value;
+    var cores = document.launchform.cores.value;
+    var hostName = document.launchform.hostname.value;
+    var sshKey = document.launchform.sshkey.value;
+    var command = document.launchform.command.value;
+    var image = document.launchform.images.options[document.launchform.images.options.selectedIndex].value;
+    var port = document.launchform.port.value;
+    var customScript = createDockerCustomScript(image, command, port);
+
+    createNewVm(apiEntryPoint, new vm(name, template, cluster, memory, sockets, cores, new initialization(hostName, sshKey, false, customScript)));
+}
+
+    parent.postMessage(DOCKER_PLUGIN_MESSAGE_PREFIX + DOCKER_PLUGIN_MESSAGE_DELIM + 'GetDataCenters', '*');
+    parent.postMessage(DOCKER_PLUGIN_MESSAGE_PREFIX + DOCKER_PLUGIN_MESSAGE_DELIM + 'GetImages', '*');
+
+    $( "#dcs" ).change(function() {
+        dcSelectionChangedEvent();
+    });
+
+</script>
+
+</body>
+</html>

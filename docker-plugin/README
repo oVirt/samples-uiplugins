@@ -1,0 +1,28 @@
+Docker plugin
+-------------------
+
+This plugin allows to create an oVirt VM that runs a docker image inside it.
+Requirements:
+1. The template that has a docker, cloud-init, and oVirt-guest agent installed
+2. The docker service should be configured with the "-r" option, to make sure the docker container is restarted after rebooting the VM
+
+INSTALLING
+
+1. Configure oVirt Engine HTTP(S) origin(s), and the available docker images, either via editing the existing plugin config file ($PLUGIN_HOME/docker.json), or by creating a new user plugin config file in $ENGINE_ETC/ui-plugins/docker-config.json
+- The current config file has some docker images configured, as well as the "localhost" origin
+
+Expose plugin metadata to oVirt Engine
+  $ ln -s $PLUGIN_HOME/docker.json $ENGINE_USR/ui-plugins/docker.json
+
+Expose plugin static files to oVirt Engine
+  $ ln -s $PLUGIN_HOME/docker-resources $ENGINE_USR/ui-plugins/docker-resources
+
+USAGE:
+1. Fill in the DC, Cluster, Template (template that has the requirements above), VM properties, Docker details (image, port mapping and command if needed), and cloud-init data.
+2. Run the created VM
+
+Notes:
+1. If the docker image already exists in the template then the docker container will probably be started quickly.
+However, if it isn't then it will be downloaded from the docker public registry, and that may take a while, depnding on the size of the image.
+2. The list of containers is currently hard-coded in the plugin configuration file. The code to get the list from the external public docker image repository is available, but it requires JSONP support to prevent cross-origin issues.
+

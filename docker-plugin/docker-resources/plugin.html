@@ -1,0 +1,187 @@
+<!doctype html>
+<!--
+    oVirt Docker Plugin
+-->
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type='text/javascript'>
+
+var formWindow = null;
+var api = parent.pluginApi('docker');
+var DOCKER_PLUGIN_MESSAGE_DELIM = ':';
+var DOCKER_PLUGIN_MESSAGE_PREFIX = 'docker-plugin';
+
+// Get runtime plugin configuration, i.e. custom configuration (if any)
+// merged on top of default configuration (if any)
+var config = api.configObject();
+
+
+function getDCList(apiEntryPoint) {
+    var dcs = new Array();
+    var dcsUrl = apiEntryPoint + "/datacenters";
+    jQuery.ajax({
+        type: "GET",
+        dataType: "json",
+        url: dcsUrl,
+        headers: { 'Prefer' : 'persistent-auth' },
+        success: function(data) {
+            for (var index in data.data_center) {
+                dcs[index] = data.data_center[index].name;
+            }
+            formWindow && formWindow.updateDataCenters(dcs);
+        }
+    });
+}
+
+function setImageList(images) {
+    formWindow && formWindow.updateImages(images);
+}
+
+// Currently not in use.
+// Useful for getting the images from the public repo, once it supports JSONP
+function getImageList(query) {
+    var images = new Array();
+    jQuery.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "https://index.docker.io/v1/search?q=" + encodeURIComponent(query),
+        success: function(data) {
+            for (var index in data.results) {
+                images[index] = data.results[index].name + " (" + data.results[index].description + ")";
+            }
+            formWindow && formWindow.updateImages(images);
+        },
+        error: function (jqXHR, status) {
+             alert(JSON.stringify(jqXHR));
+        }
+    });
+}
+
+function getClusterList(apiEntryPoint, dcName) {
+    var clusters = new Array();
+    var clustersUrl = apiEntryPoint + "/clusters?search=" + encodeURIComponent('datacenter=' + dcName);
+    jQuery.ajax({
+        type: "GET",
+        dataType: "json",
+        url: clustersUrl,
+        headers: { 'Prefer' : 'persistent-auth' },
+        success: function(data) {
+            for (var index in data.cluster) {
+                clusters[index] = data.cluster[index].name;
+            }
+            formWindow && formWindow.updateClusters(clusters);
+        }
+    });
+}
+
+function getTemplateList(apiEntryPoint, dcName) {
+    var templates = new Array();
+    var templatesUrl = apiEntryPoint + "/templates?search=" + encodeURIComponent('datacenter=' + dcName);
+    jQuery.ajax({
+        type: "GET",
+        dataType: "json",
+        url: templatesUrl,
+        headers: { 'Prefer' : 'persistent-auth' },
+        success: function(data) {
+            for (var index in data.template) {
+                templates[index] = data.template[index].name;
+            }
+            formWindow && formWindow.updateTemplates(templates);
+        }
+    });
+}
+
+function addVm() {
+    formWindow && formWindow.addVm(config.apiEntryPoint);
+}
+
+    // Customize API options that affect specific features of plugin API
+    api.options({
+        // Configure source origin(s), i.e. protocol://domain:port
+        // from which HTML5 message events will be accepted
+        allowedMessageOrigins: config.allowedOrigins
+    });
+
+    var init = function() {
+        api.addMainTabActionButton('VirtualMachine', 'Create Docker VM',
+            {
+                isEnabled: function() {
+                    return arguments.length == 0;
+                },
+                onClick: function() {
+                    api.showDialog('Create Docker VM', 'launch-docker',
+                                   'plugin/docker/launch-docker-dialog.html',
+                                   '540px', '500px',
+                                   {
+                                       buttons: [
+                                                    {
+                                                        label: 'Cancel',
+                                                        onClick: function() {
+                                                            api.closeDialog('launch-docker');
+                                                        }
+                                                    },
+                                                    {
+                                                        label: 'OK',
+                                                        onClick: addVm
+                                                    }
+                                                ],
+                                                resizeEnabled: true,
+                                                closeIconVisible: true,
+                                                closeOnEscKey: true
+                                   });
+                }
+            }
+        );
+    };
+
+    // Register event handler functions for later invocation by UI plugin infrastructure
+    api.register({
+
+        // Called by the infrastructure as part of plugin initialization,
+        // will be called just once during the lifetime of a plugin
+        UiInit: function() {
+            init();
+        },
+        MessageReceived: function(data, sourceWindow) {
+            if (typeof data !== 'string') {
+                return;
+            }
+
+            var tuple = data.split(DOCKER_PLUGIN_MESSAGE_DELIM);
+            if (tuple[0] !== DOCKER_PLUGIN_MESSAGE_PREFIX) {
+                return;
+            }
+
+            switch (tuple[1]) {
+                case 'GetDataCenters':
+                    formWindow = sourceWindow;
+                    getDCList(config.apiEntryPoint);
+                    break;
+                case 'GetClustersAndTemplates':
+                    formWindow = sourceWindow;
+                    getClusterList(config.apiEntryPoint, tuple[2]);
+                    getTemplateList(config.apiEntryPoint, tuple[2]);
+                    break;
+                case 'GetImages':
+                    formWindow = sourceWindow;
+                    setImageList(config.dockerImages);
+                    break;
+                case 'CloseDialog':
+                    api.closeDialog('launch-docker');
+                    break;
+            }
+        },
+    });
+
+    // Tell plugin infrastructure that we are good to go, expect UiInit callback
+    api.ready();
+
+</script>
+
+</body>
+</html>
