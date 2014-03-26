@@ -1,0 +1,20 @@
+AngularJS Demo Plugin
+---------------------
+
+This plugin does the following:
+
+- adds Test main tab
+- when selected, Test main tab sends message to the plugin
+- plugin validates the message and invokes function on Test main tab
+- Test main tab's function updates AngularJS scope which in turn updates tab UI
+
+This plugin uses AngularJS, Model-View-Controller framework for JavaScript:
+http://angularjs.org/
+
+INSTALLATION
+
+Expose plugin metadata to oVirt Engine
+  $ ln -s $PLUGIN_HOME/test.json $ENGINE_DATA/ovirt-engine/ui-plugins/test.json
+
+Expose plugin static files to oVirt Engine
+  $ ln -s $PLUGIN_HOME/src $ENGINE_DATA/ovirt-engine/ui-plugins/test-resources
