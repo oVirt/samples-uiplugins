@@ -163,8 +163,8 @@
                  * the pnp4nagios server.
                  */
                 var pnp4NagiosUrl = "";
-                if(!configObject.pnp4nagiosUrl) {
-                    pnp4NagiosUrl = $location.protocol() + "://" + $location.host() + ((!$location.port()) ? "" : ":" + $location.port());
+                if((!configObject.pnp4nagiosUrl) || (!configObject)) {
+                    pnp4NagiosUrl = $location.protocol() + "://" + $location.host() + ":" + ((!$location.port()) ? "" :  $location.port());
                 } else {
                     pnp4NagiosUrl = configObject.pnp4nagiosUrl;
                 }

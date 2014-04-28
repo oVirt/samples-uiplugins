@@ -58,11 +58,17 @@
         };
     }]);
 
-    mod.factory('initService', ['pluginApi', 'pluginEventHandlers', '$window', function (pluginApi, pluginEventHandlers, $window) {
+    mod.factory('initService', ['pluginApi', 'pluginEventHandlers', '$window', '$location', function (pluginApi, pluginEventHandlers, $window, $location) {
         return {
-            bootstrapPlugin: function () {
+            bootstrapPlugin: function () { 
+                var messageOrigin;
+                if(!pluginApi.configObject().messageOrigins || !pluginApi.configObject()){
+                    messageOrigin = $location.protocol() + "://" + $location.host() + ":" +((!$location.port()) ? "" : $location.port());
+                } else {
+                    messageOrigin = pluginApi.configObject().messageOrigins;
+                }
                 var apiOptions = {
-                    allowedMessageOrigins: pluginApi.configObject().messageOrigins
+                        allowedMessageOrigins: messageOrigin
                 };
                 pluginApi.options(apiOptions);
                 pluginApi.register(pluginEventHandlers);

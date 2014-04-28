@@ -1,9 +1,0 @@
-{
-    "name": "GlusterNagiosDashboard",
-    "url": "plugin/GlusterNagiosDashboard/start.html",
-    "resourcePath": "gluster-nagios-resources",
-    "config": {
-        "messageOrigins":["http://localhost.localdomain:8080"],
-        "pnp4nagiosUrl" : "http://10.70.43.162"
-    }
-}

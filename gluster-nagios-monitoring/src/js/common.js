@@ -3,7 +3,7 @@
 (function (mod) {
 
 
-    mod.value('pluginName', 'GlusterNagiosDashboard');
+    mod.value('pluginName', 'GlusterNagiosMonitoring');
 
     mod.factory('urlUtil', ['pluginName', function (pluginName) {
         return {
