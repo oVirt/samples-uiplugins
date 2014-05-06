@@ -1,7 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html ng-app="plugin.trendsTab">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="css/dashboard.css" rel="stylesheet"/>
 <script src="lib/angular/js/angular.js"></script>
 <script src="lib/ui-bootstrap-tpls-0.10.0.js"></script>
 <script src="js/trends.js"></script>
@@ -24,72 +26,55 @@ display: none;
 </style>
 </head>
 <body ng-controller="tabController">
-<div class="noPrint">
-<div id="header" style = "width: 100%;height: 90%;background-color: #E6E6FA ;text-align:center;">
-	<div id="padding-left" style="width: 12%; float: left;visibility: hidden;">''</div>
-	<div style="float: left; width:30%;">	
-		<div style="overflow: visible;text-align: center;">
-			<label style="padding-top: 3%">Trends Start</label>
-			<div id="startDateAndTime" ng-controller="startDateTimeController" >
-				<div style="width: 54%; padding-top: 9.5%; float: left;">
-					<div>
+	<div class ="noPrint">
+		<div class="trends-panel">
+			<div class="trends-search-panel">
+
+				<div id="startDateAndTime" class="datetime-panel" ng-controller="startDateTimeController" >
+					<div class="range-label">From</div>
+					<div class="date-panel">
 						<p class="input-group">
-						<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="startdt" is-open="opened" max="max-date" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
+							<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="startdt" is-open="opened" max="max-date" datepicker-options="dateOptions" ng-required="true" close-text="Close"/>
 							<span class="input-group-btn">
-								<button class="btn btn-default" ng-click="open($event)">
-								<i class="glyphicon glyphicon-calendar"></i>
-								</button>
-							</span>
-						</p>
-					</div>
-				</div>
-				<div id="startDateTimePadding" style="width: 2%;float: left;visibility: hidden;"> ''</div>
-				<div ng-model="mytime" ng-change="changed()" style="display: inline-block; float: left;width: 44%;">
-					<timepicker hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div id="datesPadding" style="width:2.5%;float: left;visibility: hidden;">''</div>
-	<div style="float: left; width:30%;">
-		<div style="overflow: visible;text-align: center;">
-			<label style="padding-top: 3%">Trends End</label>
-			<div id="stopDateAndTime" ng-controller="stopDateTimeController">
-				<div style="width: 54%; padding-top: 9.5%; float: left;">
-					<div>
-						<p class="input-group">
-							<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="stopdt" is-open="opened" max="max-date" min = "min-date" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-					 		<span class="input-group-btn">
 								<button class="btn btn-default" ng-click="open($event)">
 									<i class="glyphicon glyphicon-calendar"></i>
 								</button>
 							</span>
 						</p>
 					</div>
+					<div class="time-panel">
+						<timepicker ng-model="mytime" ng-change="changed()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+					</div>
 				</div>
-				<div id="stopDateTimePadding" style="width: 2%;float: left;visibility: hidden;"> ''</div>
-				<div ng-model="mytime" ng-change="changed()" style="display: inline-block; float: left;width: 44%;">
-					<timepicker hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+
+				<div id="stopDateAndTime" class="datetime-panel" ng-controller="stopDateTimeController">
+					<div class="range-label">To</div>
+					<div class="date-panel">
+						<p class="input-group">
+							<input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="stopdt" is-open="opened" max="max-date" min = "min-date" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+							<span class="input-group-btn">
+								<button class="btn btn-default" ng-click="open($event)">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</button>
+							</span>
+						</p>
+					</div>
+					<div class="time-panel">
+						<timepicker ng-model="mytime" ng-change="changed()" hour-step="hstep" minute-step="mstep" show-meridian="ismeridian"></timepicker>
+					</div>
+				</div>
+
+				<div class="action-panel">
+					<button class="btn btn-default" ng-click="getCustomGraphs()">Submit</button>
+					<img src="images/refresh.png" style="height: 18px;" ng-click="refresh()"/>
+					<img src="images/print.png" style=" height: 22px;" ng-click="exportToPdf()"/>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="dateActionPadding" style="width: 5%;"></div>
-	<div style="padding-top: 6.5%; float: left; width:6%;">
-		<button style="height: 37%;" ng-click="getCustomGraphs()">Submit</button>
-	</div>
-	<!--  <div style="width:2%;"></div>-->
-	<div id="graphActions" style="float: left; padding-top: 6.5%;width:10%;">
-		<div>
-			<img src="images/refresh.png" style="height: 18px;" ng-click="refresh()"/>
-			<img src="images/print.png" style=" height: 22px;" ng-click="exportToPdf()"/>
-		</div>
-	</div>
-	</div>
-	</div>
 	<div class = "printButDontShow">Time Range : {{start}} to {{stop}}</div>
 	<div align="center">
-		<img style="padding-top: 9px; padding-left: 10px" ng-repeat="graph in graphs" ng-src="{{graph}}" />
+		<img style="padding-top: 9px; padding-left: 10px" ng-repeat="graph in graphs" ng-src="{{graph}}"/>
 	</div>
 </body>
 </html>
