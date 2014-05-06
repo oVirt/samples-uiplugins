@@ -18,7 +18,7 @@
             },
             trimStartAndStopTimeFromUrl : function(url) {
                 var lastIndex = url.lastIndexOf("&start=")
-                if(lastIndex > 0) {
+                if (lastIndex > 0) {
                     return url.substring(0 , lastIndex);
                 }
                 return url;
@@ -94,7 +94,7 @@
                 case "Volume":
                     clusterService.getClusters().then(function(clusters) {
                         for(var i = 0 ; i < clusters.length ; i++) {
-                            if(clusters[i].id == clusterId) {
+                            if (clusters[i].id == clusterId) {
                                 hosts[j] = clusters[i].name;
                                 j++;
                             }
@@ -107,7 +107,7 @@
                             hostService.getHosts().then(function(thosts) {
                                 for(var i = 0 ; i < bricks.length ; i++) {
                                     for(var j = 0 ; j < thosts.length ; j++) {
-                                        if(bricks[i].server_id == thosts[j].id) {
+                                        if (bricks[i].server_id == thosts[j].id) {
                                             hosts = [];
                                             services = [];
                                             hosts[0] = thosts[j].name;
@@ -126,7 +126,7 @@
                     hostService.getHosts().then(function(tHosts) {
                         services[0] = "Cpu_Utilization";
                         for(var i = 0 ; i < tHosts.length; i++) {
-                            if(tHosts[i].cluster.id == treeParentId) {
+                            if (tHosts[i].cluster.id == treeParentId) {
                                 hosts[j] = tHosts[i].name;
                                 j++;
                             }
@@ -162,11 +162,10 @@
                  * If pnp4NagiosUrl is available in configuration object, it uses the same url or else,it will assume engine url to be
                  * the pnp4nagios server.
                  */
-                var pnp4NagiosUrl = "";
-                if((!configObject.pnp4nagiosUrl) || (!configObject)) {
-                    pnp4NagiosUrl = $location.protocol() + "://" + $location.host() + ":" + ((!$location.port()) ? "" :  $location.port());
-                } else {
-                    pnp4NagiosUrl = configObject.pnp4nagiosUrl;
+                var pnp4NagiosUrl = configObject.pnp4nagiosUrl;
+                if (!pnp4NagiosUrl) {
+                    var port = ($location.port()) ? ":" + $location.port() : "";
+                    pnp4NagiosUrl = $location.protocol() + "://" + $location.host()  + port;
                 }
                 return pnp4NagiosUrl;
             },
@@ -175,16 +174,16 @@
                 var tGraphs = [];
                 var today = new Date();
                 var yesterday = graphUtils.getYesterday();
-                if(!$rootScope.startDate) {
+                if (!$rootScope.startDate) {
                     $rootScope.startDate = new Date(yesterday);
                 }
-                if(!$rootScope.startTime) {
+                if (!$rootScope.startTime) {
                     $rootScope.startTime = new Date(yesterday);
                 }
-                if(!$rootScope.stopDate) {
+                if (!$rootScope.stopDate) {
                     $rootScope.stopDate = new Date(today);
                 }
-                if(!$rootScope.stopTime) {
+                if (!$rootScope.stopTime) {
                     $rootScope.stopTime = new Date(today);
                 }
 
@@ -459,7 +458,7 @@
             $scope.stop = graphUtils.formTimeInFormat(graphUtils.prepareDate($rootScope.stopDate, $rootScope.stopTime));
         });
         $scope.$watch('dataManager.getGraphsSet()', function(newVal, oldVal) {
-            if(newVal) {
+            if (newVal) {
                 $scope.graphs = [];
                 $scope.graphs = dataManager.getGraphs();
                 dataManager.unsetGraphsSet();
@@ -486,7 +485,7 @@
             var stopDate = $rootScope.stopDate;
             var stopTime = $rootScope.stopTime;
             var stopFullDate = graphUtils.prepareDate(stopDate , stopTime);
-            if((($scope.graphs)) && ($scope.graphs.length > 0)) {
+            if ((($scope.graphs)) && ($scope.graphs.length > 0)) {
                 latestGraphs = dataManager.appendUrlsWithTime($scope.graphs, startFullDate, stopFullDate);
                 for(var i = 0 ; i < latestGraphs.length ; i++) {
                     $scope.graphs[i] = latestGraphs[i];

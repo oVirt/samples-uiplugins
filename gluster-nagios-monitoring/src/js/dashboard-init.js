@@ -10,7 +10,7 @@
         var tabWindow, selectedTreeItem;
         return {
             addTabs: function () {
-                if(pluginApi.configObject().showDashboard) {
+                if (pluginApi.configObject().showDashboard) {
                     pluginApi.addMainTab('Dashboard', 'dashboard-tab', urlUtil.relativeUrl('dashboard.html'));
                 }
                 pluginApi.addMainTab('Trends', 'trends-tab', urlUtil.relativeUrl('trendsTab.html'));
@@ -22,7 +22,7 @@
                 selectedTreeItem = item;
             },
             updateTab: function () {
-                if(tabWindow && !selectedTreeItem) {
+                if (tabWindow && !selectedTreeItem) {
                     selectedTreeItem = {type : "System"};
                 }
                 if (tabWindow && selectedTreeItem) {
@@ -61,11 +61,10 @@
     mod.factory('initService', ['pluginApi', 'pluginEventHandlers', '$window', '$location', function (pluginApi, pluginEventHandlers, $window, $location) {
         return {
             bootstrapPlugin: function () { 
-                var messageOrigin;
-                if(!pluginApi.configObject().messageOrigins || !pluginApi.configObject()){
-                    messageOrigin = $location.protocol() + "://" + $location.host() + ":" +((!$location.port()) ? "" : $location.port());
-                } else {
-                    messageOrigin = pluginApi.configObject().messageOrigins;
+                var messageOrigin = pluginApi.configObject().messageOrigins;
+                if (!messageOrigin) {
+                    var port = (($location.port()) && ($location.absUrl().indexOf($location.port().toString()) > 0)) ? ":" + $location.port() : "";
+                    messageOrigin = $location.protocol() + "://" + $location.host() + port;
                 }
                 var apiOptions = {
                         allowedMessageOrigins: messageOrigin
