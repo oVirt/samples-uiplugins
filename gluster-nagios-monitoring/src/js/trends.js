@@ -71,7 +71,7 @@
                 switch (selectedEntityType) {
                 case "Host":
                     hosts[0] = selectedEntity;
-                    services =  ["Cpu_Utilization" , "Memory_Utilization" , "Network_Utilization" , "Disk_Utilization"];
+                    services =  ["Cpu Utilization" , "Memory Utilization" , "Network Utilization" , "Disk Utilization&source=0", "Disk Utilization&source=1", "Disk Utilization&source=2", "Disk Utilization&source=3","Swap Utilization"];
                     this.setGraphs(graphUtils.getGraphs(pnp4NagiosUrl,hosts,services));
                     break;
                 case "Volume":
@@ -100,7 +100,7 @@
                             }
                         }
                         
-                        services = ["Volume_Utilization_-_" + treeEntity];
+                        services = ["Volume Utilization - " + treeEntity];
                         graphUrls = graphUtils.getGraphs(pnp4NagiosUrl,hosts,services);
                         var length = graphUrls.length;
                         volumeService.getBricks(clusterId, treeParentId).then(function(bricks) {
@@ -111,7 +111,7 @@
                                             hosts = [];
                                             services = [];
                                             hosts[0] = thosts[j].name;
-                                            services[0] = thosts[j].name + "." + bricks[i].name;
+                                            services[0] =  "Brick Utilization - " + bricks[i].brick_dir;
                                             var tGraphs = graphUtils.getGraphs(pnp4NagiosUrl,hosts,services);
                                             graphUtils.appendGraphs(graphUrls,tGraphs);
                                         }
@@ -124,7 +124,7 @@
                     break;
                 case "Hosts" :
                     hostService.getHosts().then(function(tHosts) {
-                        services[0] = "Cpu_Utilization";
+                        services[0] = "Cpu Utilization";
                         for(var i = 0 ; i < tHosts.length; i++) {
                             if (tHosts[i].cluster.id == treeParentId) {
                                 hosts[j] = tHosts[i].name;
@@ -140,7 +140,7 @@
                     hosts[0] = treeEntity;
                     volumeService.getVolumes(treeParentId).then(function(volumes) {
                        for(var i = 0 ; i < volumes.length ; i++) {
-                           services[i] = ["Volume_Utilization_-_" + volumes[i].name];
+                           services[i] = ["Volume Utilization - " + volumes[i].name];
                        }
                        caller.setGraphs(graphUtils.getGraphs(pnp4NagiosUrl,hosts,services));
                     });
@@ -148,7 +148,7 @@
                 case "System" :
                 default :
                     clusterService.getClusters().then(function(clusters) {
-                        services[0] = "Cluster_Utilization";
+                        services[0] = "Cluster Utilization";
                         for(var i = 0 ; i < clusters.length ; i++) {
                             hosts[i] = clusters[i].name;
                         }
