@@ -130,6 +130,12 @@ function createDockerCustomScript(image, command, port) {
     }
 
     // Setting the image
+    // If the user didn't input a tag name, append "latest"
+    // to download only the one tagged as latest and avoid downloading all the repository,
+    // because docker will run the latest, so no need to download the other images.
+    if (image.indexOf(':') < 0) {
+       image += ':latest';
+    }
     result += ', "' + image + '"';
 
     // Setting a command if it is set
