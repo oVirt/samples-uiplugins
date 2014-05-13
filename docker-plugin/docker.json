@@ -13,8 +13,8 @@
 
     // Default configuration associated with the plugin
     "config": {
-        "allowedOrigins": ["http://localhost:8700"],
-        "apiEntryPoint": "http://localhost:8700/ovirt-engine/api",
+        "allowedOrigins": ["https://localhost"],
+        "apiEntryPoint": "https://localhost/ovirt-engine/api",
         "dockerImages": ["fedora", "ubuntu", "cirros", "goldmann/wildfly-cluster:front-end"]
     }
 
