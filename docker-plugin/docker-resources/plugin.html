@@ -111,7 +111,7 @@ function addVm() {
         api.addMainTabActionButton('VirtualMachine', 'Create Docker VM',
             {
                 isEnabled: function() {
-                    return arguments.length == 0;
+                    return true;
                 },
                 onClick: function() {
                     api.showDialog('Create Docker VM', 'launch-docker',
