@@ -21,11 +21,11 @@
             setSelectedTreeItem: function (item) {
                 selectedTreeItem = item;
             },
-            updateTab: function () {
+            updateTab: function() {
                 if (tabWindow && !selectedTreeItem) {
                     selectedTreeItem = {type : "System"};
                 }
-                if (tabWindow && selectedTreeItem) {
+                if (tabWindow && selectedTreeItem && (window.parent.location.href.indexOf("#trends-tab") > -1)) {
                     var type = selectedTreeItem.type;
                     var entityId = selectedTreeItem.entity && selectedTreeItem.entity.id;
                     var entityName = selectedTreeItem.entity && selectedTreeItem.entity.name;
