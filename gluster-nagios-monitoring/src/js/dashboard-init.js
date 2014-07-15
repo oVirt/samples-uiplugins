@@ -10,7 +10,7 @@
         var tabWindow, selectedTreeItem;
         return {
             addTabs: function () {
-                if (pluginApi.configObject().showDashboard) {
+                if ((pluginApi.configObject().showDashboard && pluginApi.configObject().showDashboard === "true")) {
                     pluginApi.addMainTab('Dashboard', 'dashboard-tab', urlUtil.relativeUrl('dashboard.html'));
                 }
                 pluginApi.addMainTab('Trends', 'trends-tab', urlUtil.relativeUrl('trendsTab.html'));
