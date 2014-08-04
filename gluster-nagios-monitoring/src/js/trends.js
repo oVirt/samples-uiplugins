@@ -485,7 +485,10 @@
             var stopDate = $rootScope.stopDate;
             var stopTime = $rootScope.stopTime;
             var stopFullDate = graphUtils.prepareDate(stopDate , stopTime);
-            if ((($scope.graphs)) && ($scope.graphs.length > 0)) {
+            if (stopFullDate.getTime() < startFullDate.getTime()) {
+                alert("The To date-time must be greater than the From date-time");
+            }
+            else if ((($scope.graphs)) && ($scope.graphs.length > 0)) {
                 latestGraphs = dataManager.appendUrlsWithTime($scope.graphs, startFullDate, stopFullDate);
                 for(var i = 0 ; i < latestGraphs.length ; i++) {
                     $scope.graphs[i] = latestGraphs[i];
