@@ -65,9 +65,15 @@ display: none;
 				</div>
 
 				<div class="action-panel">
-					<button class="btn btn-default" ng-click="getCustomGraphs()">Submit</button>
-					<img src="images/refresh.png" style="height: 18px;" ng-click="refresh()"/>
-					<img src="images/print.png" style=" height: 22px;" ng-click="exportToPdf()"/>
+					<div style="float: left;">
+						<button class="btn btn-default" ng-click="getCustomGraphs()">Submit</button>
+					</div>
+					<div class="trendsActions">
+						<img style="height: 18px; float: left;" src="images/refresh.png" ng-click="refresh()"/>
+					</div>
+					<div class="trendsActions">
+						<img src="images/print.png" style=" height: 20px;" ng-click="exportToPdf()"/>
+					</div>
 				</div>
 			</div>
 		</div>
