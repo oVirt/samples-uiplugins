@@ -5,7 +5,8 @@
 	var alertService = function ($http) {
 		return {
 			getAlerts: function() {
-				return $http({method: 'GET', url: '/api/events?search=severity%3Dalert', headers: {Accept: 'application/json'}}).
+                var headers = {Accept: 'application/json', Prefer: 'persistent-auth'};
+				return $http.get('/ovirt-engine/api/events?search=severity%3Dalert', {headers: headers}).
 					then(function (response) {
 						if(typeof response.data.event !== 'undefined') {
 							return response.data.event;
@@ -23,7 +24,8 @@
 	var clusterService = function ($http) {
 		return {
 			getClusters: function() {
-				return $http({method: 'GET', url: '/api/clusters', headers: {Accept: 'application/json'}}).
+                var headers = {Accept: 'application/json', Prefer: 'persistent-auth'};
+				return $http.get('/ovirt-engine/api/clusters', {headers: headers}).
 					then(function (response) {
 						return response.data.cluster;
 					});
@@ -36,7 +38,8 @@
 	var hostService = function ($http) {
 		return {
 			getHosts: function() {
-				return $http({method: 'GET', url: '/api/hosts', headers: {Accept: 'application/json'}}).
+                var headers = {Accept: 'application/json', Prefer: 'persistent-auth'};
+				return $http.get('/ovirt-engine/api/hosts', {headers: headers}).
 					then(function (response) {
 						if(typeof response.data.host !== 'undefined') {
 							return response.data.host;	
@@ -54,8 +57,9 @@
 	var volumeService = function ($http) {
 		return {
 			getVolumes: function(clusterId) {
-				var volumesUrl = '/api/clusters/'+clusterId+'/glustervolumes';
-				return $http({method: 'GET', url: volumesUrl, headers: {Accept: 'application/json'}}).
+                var headers = {Accept: 'application/json', Prefer: 'persistent-auth'};
+				var volumesUrl = '/ovirt-engine/api/clusters/'+clusterId+'/glustervolumes';
+				return $http.get(volumesUrl, {headers: headers}).
 					then(function (response) {
 						if(typeof response.data.gluster_volume !== 'undefined') {
 							return response.data.gluster_volume;
@@ -67,8 +71,9 @@
 			},
 
 			getBricks: function(clusterId, volumeId) {
-				var bricksUrl = '/api/clusters/'+clusterId+'/glustervolumes/'+volumeId+'/bricks';
-				return $http({method: 'GET', url: bricksUrl, headers: {Accept: 'application/json'}}).
+                var headers = {Accept: 'application/json', Prefer: 'persistent-auth'};
+				var bricksUrl = '/ovirt-engine/api/clusters/'+clusterId+'/glustervolumes/'+volumeId+'/bricks';
+				return $http.get(bricksUrl, {headers: headers}).
 					then(function (response) {
 						if(typeof response.data.brick !== 'undefined') {
 							return response.data.brick;
