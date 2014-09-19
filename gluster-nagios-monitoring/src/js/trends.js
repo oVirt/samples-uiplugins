@@ -162,11 +162,13 @@
                  * If pnp4NagiosUrl is available in configuration object, it uses the same url or else,it will assume engine url to be
                  * the pnp4nagios server.
                  */
-                var pnp4NagiosUrl = configObject.pnp4nagiosUrl;
-                if (!pnp4NagiosUrl) {
+                if ((! configObject) || (! configObject.pnp4nagiosUrl)) {
                     var port = ($location.port()) ? ":" + $location.port() : "";
                     pnp4NagiosUrl = $location.protocol() + "://" + $location.host()  + port;
                 }
+		if (! pnp4NagiosUrl) {
+			pnp4NagiosUrl = configObject.pnp4nagiosUrl;
+		}
                 return pnp4NagiosUrl;
             },
             setGraphs : function(graphUrls) {
@@ -477,6 +479,10 @@
                 $scope.graphs[i] = graphs[i];
             }
         };
+	$scope.goToNagios = function() {
+		var url = dataManager.getPnp4NagiosUrl() + "/nagios";
+		$window.open(url);
+	};
         $scope.getCustomGraphs = function() {
             var startDate = $rootScope.startDate;
             var startTime = $rootScope.startTime;

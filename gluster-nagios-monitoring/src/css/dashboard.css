@@ -13,7 +13,7 @@
 }
 
 .trends-search-panel {
-	width: 900px;
+	width: 1075px;
 	margin: 0 auto;
 }
 
@@ -60,4 +60,20 @@
 	border: 1px solid #96B7D6;
 	cursor: pointer;
 	cursor: hand;
+}
+
+.nagiosHomeLink {
+	padding-top: 35px;
+	float:left;
+	color: rgb(0,0,255);
+}
+
+.nagiosHomeLink:hover {
+	float:left;
+	color: rgb(0,0,255);
+	text-decoration: underline;
+	-moz-text-decoration-color: blue;
+	text-decoration-color: blue;
+	cursor: pointer;
+        cursor: hand;
 }
