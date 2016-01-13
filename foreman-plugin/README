@@ -1,3 +1,9 @@
+NOTE THAT THIS PLUGIN IS NO LONGER MAINTAINED AND TESTED.
+
+There is a built-in integration in oVirt now.
+
+=================================================================================================================================================================
+
 In the oVirt engine, take the files Foreman UI plugin files from the UI-plugins repository, and place them in /usr/share/ovirt-engine/ui-plugins:
 1. foreman.json
 2. foreman-files/start.html
